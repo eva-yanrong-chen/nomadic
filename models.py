@@ -21,9 +21,12 @@ def setup_db(app, database_path=database_path):
     db.init_app(app)
     db.create_all()
 
+
 '''
 Artist
 '''
+
+
 class Artist(db.Model):
     __tablename__ = 'artist'
 
@@ -57,6 +60,8 @@ class Artist(db.Model):
 '''
 Artist
 '''
+
+
 class Client(db.Model):
     __tablename__ = 'client'
 
@@ -90,6 +95,8 @@ class Client(db.Model):
 '''
 Project
 '''
+
+
 class Project(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)

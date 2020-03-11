@@ -3,11 +3,7 @@ from flask import request, _request_ctx_stack
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
-
-
-AUTH0_DOMAIN = 'dev-zuj7kdfn.auth0.com'
-ALGORITHMS = ['RS256']
-API_AUDIENCE = 'nomadic'
+from config import AUTH0_DOMAIN, ALGORITHMS, API_AUDIENCE
 
 # AuthError Exception
 '''
@@ -20,12 +16,12 @@ class AuthError(Exception):
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
-
+        
 
 # Auth Header
 
 '''
-@ implement get_token_auth_header() method
+@TODO implement get_token_auth_header() method
     it should attempt to get the header from the request
         it should raise an AuthError if no header is present
     it should attempt to split bearer and the token
@@ -35,7 +31,6 @@ class AuthError(Exception):
 
 
 def get_token_auth_header():
-
     auth = request.headers.get('Authorization', None)
     if not auth:
         raise AuthError({

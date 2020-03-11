@@ -4,7 +4,7 @@ import json
 from flask_sqlalchemy import SQLAlchemy
 
 from app import app
-from models import setup_db, Artist, Client, Project, db_drop_and_creat_all
+from models import setup_db, Artist, Client, Project, db_drop_and_create_all
 from config import artist_token, client_token
 
 
@@ -28,7 +28,7 @@ class TestCase(unittest.TestCase):
         self.database_path = "postgres://{}/{}".format(
             'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
-        db_drop_and_creat_all()
+        db_drop_and_create_all()
 
         # binds the app to the current context
         with self.app.app_context():

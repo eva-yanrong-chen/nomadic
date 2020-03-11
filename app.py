@@ -56,7 +56,7 @@ def get_project_detail(jwt, id):
 
 
 '''
-@TODO POST '/clients'
+POST '/clients'
     - require permission 'post:clients'
     - return status code 200 and json {'success': true, 'client': client_id}
         client: the client created
@@ -78,23 +78,21 @@ def post_client(jwt):
     try:
         client.insert()
     except Exception as e:
-        print(str(e))
         abort(422)
     client = Client.query.filter_by(name=name).one()
     return jsonify({'success': True, 'client': client.name})
 
 
 '''
-@TODO POST '/projects/'
+POST '/projects/'
     - require permission 'post:projects'
     - return status code 200 and json {'success': true, 'project': project}
         project: the project created
     - return status code 422 if request is unprocessable
 '''
 @app.route('/projects', methods=['POST'])
-# @requires_auth(permission='post:projects')
-# def post_project(jwt):
-def post_project():
+@requires_auth(permission='post:projects')
+def post_project(jwt):
     body = request.get_json()
     if (body is None):
         abort(422)
@@ -113,16 +111,15 @@ def post_project():
 
 
 '''
-@TODO POST '/artists/'
+POST '/artists/'
     - require permission 'post:artists'
     - return status code 200 and json {'success': true, 'artist': artist}
         artists: the artists just added
     - return status code 422 if request is unprocessable
 '''
 @app.route('/artists', methods=['POST'])
-# @requires_auth(permission='post:artists')
-# def post_artists(jwt):
-def post_artists():
+@requires_auth(permission='post:artists')
+def post_artists(jwt):
     body = request.get_json()
     if (body is None):
         abort(422)
@@ -140,19 +137,16 @@ def post_artists():
 
 
 '''
-@TODO PATCH '/projects/<int:id>'
+PATCH '/projects/<int:id>'
     - require permission 'patch:projects'
     - return status code 200 and json {'success': true, 'project': project}
         project: the project created
     - return status code 404 if <id> is not found
     - return status code 422 if request is unprocessable
 '''
-
-
 @app.route('/projects/<int:id>', methods=['PATCH'])
-# @requires_auth(permission='patch:projects')
-# def patch_project(jwt, id):
-def patch_project(id):
+@requires_auth(permission='patch:projects')
+def patch_project(jwt, id):
     project = Project.query.filter_by(id=id).one_or_none()
     if (project is None):
         abort(404)
@@ -170,22 +164,19 @@ def patch_project(id):
         project.description = description
     try:
         project.update()
-    except Exception:
+    except Exception as e:
         abort(422)
     return jsonify({'success': True, 'project': project.format()})
 
 
 '''
-@TODO DELETE '/projects/<int:id>'
+DELETE '/projects/<int:id>'
     - require permission 'delete:projects'
     - return status code 200 and json {'success': true, 'deleted': name}
 '''
-
-
 @app.route('/projects/<int:id>', methods=['DELETE'])
-# @requires_auth(permission='delete:projects')
-# def get_project_detail(jwt, id):
-def delete_project(id):
+@requires_auth(permission='delete:projects')
+def delete_project(jwt, id):
     project = Project.query.filter_by(id=id).one_or_none()
     if (project is None):
         abort(404)
@@ -211,7 +202,6 @@ Example error handling for unprocessable entity
 '''
 @app.errorhandler(422)
 def unprocessable(error):
-    print(error)
     return jsonify({
         "success": False,
         "error": 422,
@@ -225,7 +215,6 @@ Implement error handler for 404
 '''
 @app.errorhandler(404)
 def unprocessable(error):
-    print(error)
     return jsonify({
         "success": False,
         "error": 404,
@@ -239,7 +228,6 @@ Implement error handler for AuthError
 '''
 @app.errorhandler(AuthError)
 def autherror(error):
-    print(error)
     return jsonify({
         "success": False,
         "code": error.status_code,

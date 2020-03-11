@@ -152,7 +152,112 @@ class TestCase(unittest.TestCase):
         self.assertEqual(data['project'].get('name'),
                          'Fyyur office wall painting')
 
-    
+    def test_create_new_project_no_json(self):
+        res = self.client().post('/projects', headers=client_auth_header)
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 422)
+        self.assertFalse(data['success'])
+
+    def test_create_new_project_unauthorized(self):
+        project = {
+            'name': 'Fyyur office wall painting',
+            'client_id': 1,
+            'description': 'Paint a large wall in the Fyyur office'
+        }
+        res = self.client().post('/projects', json=project,
+                                 headers=artist_auth_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertFalse(data['success'])
+
+# ----------------------------------------------------------------------------#
+# Tests for POST /artists
+# ----------------------------------------------------------------------------#
+    def test_create_new_artist(self):
+
+        artist = {
+            'name': 'Veneer',
+            'portfolio_link': 'http://dribble.com'
+        }
+        res = self.client().post('/artists', json=artist,
+                                 headers=artist_auth_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(data['artist'].get('name'),
+                         'Veneer')
+
+    def test_create_new_artist_no_json(self):
+        res = self.client().post('/artists', headers=artist_auth_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertFalse(data['success'])
+
+    def test_create_new_artist_no_portfolio(self):
+        artist = {
+            'name': 'Vaneer'
+        }
+        res = self.client().post('/artists', json=artist,
+                                 headers=artist_auth_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertFalse(data['success'])
+
+# ----------------------------------------------------------------------------#
+# Tests for PATCH /project/<int:id>
+# ----------------------------------------------------------------------------#
+    def test_edit_project_detail_404(self):
+        project_edit = {
+            'name': 'Fyuur webpage background'
+        }
+        res = self.client().patch('/projects/10', json=project_edit,
+                                  headers=client_auth_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertFalse(data['success'])
+
+    def test_edit_project_deatil(self):
+        res = self.client().get('/projects/1', headers=client_auth_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(data['project'].get('name'),
+                         'Fyyur website background')
+
+        project_edit = {
+            'name': 'Fyyur webpage background'
+        }
+        
+        res = self.client().patch('/projects/1', json=project_edit,
+                                  headers=client_auth_header)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(data['project'].get('name'),
+                         'Fyyur webpage background')
+
+# ----------------------------------------------------------------------------#
+# Tests for PATCH /project/<int:id>
+# ----------------------------------------------------------------------------#
+    def test_delete_project_unauthorized(self):
+        res = self.client().delete('/projects/1', headers=artist_auth_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertFalse(data['success'])
+
+    def test_delete_project(self):
+        res = self.client().delete('/projects/1', headers=client_auth_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(data['project'], 'Fyyur website background')
 
 # Make the tests conveniently executable
 if __name__ == "__main__":

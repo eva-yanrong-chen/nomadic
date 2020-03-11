@@ -68,7 +68,7 @@ class Artist(db.Model):
         db.session.commit()
 
     def update(self):
-        db.session.commit(self)
+        db.session.commit()
 
     def delete(self):
         db.session.delete(self)
@@ -103,7 +103,7 @@ class Client(db.Model):
         db.session.commit()
 
     def update(self):
-        db.session.commit(self)
+        db.session.commit()
 
     def delete(self):
         db.session.delete(self)
@@ -139,7 +139,7 @@ class Project(db.Model):
         db.session.commit()
 
     def update(self):
-        db.session.commit(self)
+        db.session.commit()
 
     def delete(self):
         db.session.delete(self)

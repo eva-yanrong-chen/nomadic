@@ -3,9 +3,8 @@ from sqlalchemy import Column, String, Integer
 from flask_sqlalchemy import SQLAlchemy
 import json
 from config import AUTH0_DOMAIN, ALGORITHMS, API_AUDIENCE
+from config import database_name, database_path
 
-database_name = "nomadic"
-database_path = "postgres://{}/{}".format('localhost:5432', database_name)
 
 db = SQLAlchemy()
 

@@ -2,24 +2,49 @@ import os
 from sqlalchemy import Column, String, Integer
 from flask_sqlalchemy import SQLAlchemy
 import json
+from config import AUTH0_DOMAIN, ALGORITHMS, API_AUDIENCE
 
 database_name = "nomadic"
 database_path = "postgres://{}/{}".format('localhost:5432', database_name)
 
 db = SQLAlchemy()
 
+
 '''
 setup_db(app)
     binds a flask application and a SQLAlchemy service
 '''
-
-
 def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
     db.create_all()
+
+
+def db_drop_and_creat_all():
+    db.drop_all()
+    db.create_all()
+    db_init_records()
+
+
+def db_init_records():
+    client = Client(
+        name='Fyyur',
+        description='Platform that connects musicians and venues'
+    )
+    artist = Artist(
+        name='Picasso',
+        portfolio_link='https://www.behance.net'
+    )
+    project = Project(
+        name='Fyyur website background',
+        client_id=1,
+        description='Digital background art for the Fyyer website'
+    )
+    client.insert()
+    artist.insert()
+    project.insert()
 
 
 '''
@@ -58,7 +83,7 @@ class Artist(db.Model):
 
 
 '''
-Artist
+Client
 '''
 
 
@@ -98,7 +123,7 @@ Project
 
 
 class Project(db.Model):
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, unique=True)
     client_id = Column(Integer, db.ForeignKey('client.id'), primary_key=True)
     is_open = Column(db.Boolean, nullable=False, default=True)
@@ -128,3 +153,4 @@ class Project(db.Model):
             'isOpen': self.is_open,
             'description': self.description
         }
+
